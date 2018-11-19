@@ -34,8 +34,11 @@ def main():
     parser = argparse.ArgumentParser(
         description='jinja2 template rendering with shell environment variables'
     )
-    parser.add_argument('input_file',
-                        nargs='?', help='Input filename. Defaults to stdin.')
+    parser.add_argument('-t', dest="template", nargs='?', help='target template. Defaults to stdin.')
+
+    parser.add_argument('-i', dest="variable_file",
+                        help='Variable file to provide arguments to rendering.')
+
     parser.add_argument('-o', '--output-file',
                         help='Output filename. If none is given, and the input file ends '
                         'with "%s", the output filename is the same as the input '
@@ -44,16 +47,22 @@ def main():
     parser.add_argument('--allow-missing', action='store_true',
                         help='Allow missing variables. By default, envtpl will die with exit '
                         'code 1 if an environment variable is missing')
-    parser.add_argument('--keep-template', action='store_true',
-                        help='Keep original template file. By default, envtpl will delete '
+    parser.add_argument('--delete-template', action='store_true',
+                        help='delete original template file. By default, envtpl will not delete '
                         'the template file')
     args = parser.parse_args()
 
     variables = dict([(k, _unicodify(v)) for k, v in os.environ.items()])
 
+    extra_variables = from_file_variables(args.variable_file)
+    print extra_variables
+
+    all_variables = variables.copy()
+    all_variables.update(extra_variables)
+
     try:
-        process_file(args.input_file, args.output_file, variables,
-                     not args.allow_missing, not args.keep_template)
+        process_file(args.template, args.output_file, all_variables,
+                     not args.allow_missing, args.delete_template)
     except (Fatal, IOError) as e:
         sys.stderr.write('Error: %s\n' % str(e))
         sys.exit(1)
@@ -64,7 +73,7 @@ def main():
 def process_file(input_filename, output_filename, variables,
                  die_on_missing_variable, remove_template):
     if not input_filename and not remove_template:
-        raise Fatal('--keep-template only makes sense if you specify an input file')
+        raise Fatal('--delete-template only makes sense if you specify an template file')
 
     if die_on_missing_variable:
         undefined = jinja2.StrictUndefined
@@ -104,6 +113,17 @@ def _unicodify(s):
     if isinstance(s, str) and IS_PYTHON_2:
         s = unicode(s, 'utf-8')  # NOQA
     return s
+
+
+def from_file_variables(file_name):
+    variables = {}
+    if IS_PYTHON_2:
+        with open(file_name, 'r') as f:
+            line = f.readline()
+            pair = line.strip().split("=")
+            print pair
+            variables[pair[0]] = pair[1]
+    return variables
 
 
 def stdin_read():
