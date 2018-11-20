@@ -34,9 +34,10 @@ def main():
     parser = argparse.ArgumentParser(
         description='jinja2 template rendering with shell environment variables'
     )
-    parser.add_argument('-t', dest="template", nargs='?', help='target template. Defaults to stdin.')
+    parser.add_argument('-t', '--template', dest="template", nargs='?', required=True,
+                        help='target template. Defaults to stdin.')
 
-    parser.add_argument('-i', dest="variable_file",
+    parser.add_argument('-v', '--variable_file', dest="variable_file", required=True,
                         help='Variable file to provide arguments to rendering.')
 
     parser.add_argument('-o', '--output-file',

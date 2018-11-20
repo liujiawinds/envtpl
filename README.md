@@ -11,6 +11,10 @@ Installation or Update
 
     pip install -e git+https://github.com/liujiawinds/envtpl.git#egg=envtpl
 
+    or
+
+    pip install -e localPath
+
 How-to
 ------
 
