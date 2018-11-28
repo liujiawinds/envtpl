@@ -122,10 +122,13 @@ def from_file_variables(file_name):
     variables = {}
     if IS_PYTHON_2:
         with open(file_name, 'r') as f:
-            line = f.readline()
-            pair = line.strip().split("=")
-            print pair
-            variables[pair[0]] = pair[1]
+            while 1:
+                line = f.readline()
+                if not line:
+                    break
+                pair = line.strip().split("=")
+                print pair
+                variables[pair[0]] = pair[1]
     return variables
 
 
