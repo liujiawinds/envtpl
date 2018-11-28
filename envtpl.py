@@ -61,7 +61,7 @@ def main():
     all_variables = variables.copy()
     all_variables.update(extra_variables)
 
-    print all_variables
+    sys.stdout.write('Variables: %s\n', all_variables)
 
     try:
         process_file(args.template, args.output_file, all_variables,
