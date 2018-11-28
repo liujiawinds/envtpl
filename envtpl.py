@@ -100,7 +100,7 @@ def process_file(input_filename, output_filename, variables,
     else:
         stdout_write(output)
 
-    if input_filename and remove_template:
+    if cmp(remove_template, 'true') == 0:
         os.unlink(input_filename)
 
 
