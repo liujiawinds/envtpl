@@ -61,6 +61,8 @@ def main():
     all_variables = variables.copy()
     all_variables.update(extra_variables)
 
+    print all_variables
+
     try:
         process_file(args.template, args.output_file, all_variables,
                      not args.allow_missing, args.delete_template)
